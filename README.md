@@ -1,5 +1,7 @@
 # actions-rs/toolchain
 
+🛠️ GitHub Action for `rustup` commands
+
 Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/actions-rs/toolchain](https://github.com/actions-rs/toolchain).
 
 ## Versions

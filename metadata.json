@@ -1,5 +1,6 @@
 {
   "owner": "actions-rs",
   "name": "toolchain",
-  "visibility": ""
+  "visibility": "internal",
+  "description": "🛠️ GitHub Action for `rustup` commands"
 }

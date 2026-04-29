@@ -1,6 +1,12 @@
 # actions-rs/toolchain
 
-Hardened GitHub Action by [Chainguard](https://www.chainguard.dev).
+Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/actions-rs/toolchain](https://github.com/actions-rs/toolchain).
+
+## Versions
+
+| Version | Tag | Upstream commit |
+|---------|-----|-----------------|
+| v1.0.6 | [`v1.0.6`](https://github.com/chainguard-actions/toolchain/tree/v1.0.6) | — |
 
 ## Privacy
 

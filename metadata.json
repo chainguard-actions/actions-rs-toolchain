@@ -2,5 +2,6 @@
   "owner": "actions-rs",
   "name": "toolchain",
   "visibility": "internal",
-  "description": "🛠️ GitHub Action for `rustup` commands"
+  "description": "🛠️ GitHub Action for `rustup` commands",
+  "block_publish": false
 }

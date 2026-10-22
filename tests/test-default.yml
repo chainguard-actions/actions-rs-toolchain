@@ -1,0 +1,31 @@
+name: Test set as default
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          toolchain: stable
+          profile: minimal
+          default: true
+      - name: Assert stable is default
+        env:
+          RUSTC: ${{ steps.action.outputs.rustc }}
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          DEFAULT="$(rustup default)"
+          echo "rustup default: $DEFAULT"
+          echo "rustc output: $RUSTC"
+          if ! echo "$DEFAULT" | grep -q "^stable"; then
+            echo "FAIL: stable is not the default toolchain"
+            exit 1
+          fi
+          if [ -z "$RUSTC" ]; then
+            echo "FAIL: rustc output empty"
+            exit 1
+          fi
+          echo "PASS"

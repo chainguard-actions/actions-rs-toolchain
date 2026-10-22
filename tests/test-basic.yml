@@ -1,0 +1,44 @@
+name: Test basic stable install
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+      - name: Assert outputs are populated
+        env:
+          RUSTC: ${{ steps.action.outputs.rustc }}
+          RUSTC_HASH: ${{ steps.action.outputs.rustc_hash }}
+          CARGO: ${{ steps.action.outputs.cargo }}
+          RUSTUP: ${{ steps.action.outputs.rustup }}
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          echo "rustc: $RUSTC"
+          echo "rustc_hash: $RUSTC_HASH"
+          echo "cargo: $CARGO"
+          echo "rustup: $RUSTUP"
+          for v in "$RUSTC" "$RUSTC_HASH" "$CARGO" "$RUSTUP"; do
+            if [ -z "$v" ]; then
+              echo "FAIL: an output is empty"
+              exit 1
+            fi
+          done
+          ACTUAL_RUSTC="$(rustc --version)"
+          echo "rustc --version: $ACTUAL_RUSTC"
+          case "$ACTUAL_RUSTC" in
+            *"$RUSTC"*) ;;
+            *) echo "FAIL: rustc output '$RUSTC' not in '$ACTUAL_RUSTC'"; exit 1 ;;
+          esac
+          case "$ACTUAL_RUSTC" in
+            *"$RUSTC_HASH"*) ;;
+            *) echo "FAIL: rustc_hash '$RUSTC_HASH' not in '$ACTUAL_RUSTC'"; exit 1 ;;
+          esac
+          cargo --version
+          echo "PASS"

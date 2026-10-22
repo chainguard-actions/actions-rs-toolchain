@@ -1,0 +1,29 @@
+name: Test components install
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          toolchain: stable
+          profile: minimal
+          default: true
+          components: rustfmt, clippy
+      - name: Assert components installed
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          INSTALLED="$(rustup component list --installed --toolchain stable)"
+          echo "$INSTALLED"
+          for c in rustfmt clippy; do
+            if ! echo "$INSTALLED" | grep -q "^$c"; then
+              echo "FAIL: component $c not installed"
+              exit 1
+            fi
+          done
+          rustup run stable rustfmt --version
+          rustup run stable cargo clippy --version
+          echo "PASS"

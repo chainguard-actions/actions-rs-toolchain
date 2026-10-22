@@ -1,0 +1,37 @@
+name: Test rust-toolchain file fallback
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Write rust-toolchain file
+        run: echo "stable" > rust-toolchain
+      - id: action
+        uses: .
+        with:
+          profile: minimal
+          override: true
+      - name: Assert toolchain from file installed
+        env:
+          RUSTC: ${{ steps.action.outputs.rustc }}
+          CARGO: ${{ steps.action.outputs.cargo }}
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          echo "rustc: $RUSTC"
+          echo "cargo: $CARGO"
+          if [ -z "$RUSTC" ] || [ -z "$CARGO" ]; then
+            echo "FAIL: outputs empty"
+            exit 1
+          fi
+          LIST="$(rustup toolchain list)"
+          echo "$LIST"
+          if ! echo "$LIST" | grep -q "^stable"; then
+            echo "FAIL: stable toolchain not installed"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Cleanup
+        if: always()
+        run: rm -f rust-toolchain

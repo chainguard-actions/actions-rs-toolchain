@@ -1,0 +1,24 @@
+name: Test target install
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          toolchain: stable
+          profile: minimal
+          target: wasm32-unknown-unknown
+      - name: Assert target installed
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          TARGETS="$(rustup target list --installed --toolchain stable)"
+          echo "$TARGETS"
+          if ! echo "$TARGETS" | grep -q "^wasm32-unknown-unknown$"; then
+            echo "FAIL: wasm32-unknown-unknown not installed"
+            exit 1
+          fi
+          echo "PASS"
